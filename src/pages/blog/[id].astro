@@ -1,0 +1,101 @@
+---
+import { formatDate, getBlogs } from "../../lib/microcms.js";
+
+export async function getStaticPaths() {
+  const posts = await getBlogs();
+
+  return posts.map((post) => ({
+    params: { id: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const title = (post.title || "タイトル未設定").trim();
+const listHref = import.meta.env.PROD ? "../blog.html" : "/blog/";
+---
+
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <p><a href={listHref}>一覧へ戻る</a></p>
+    <article>
+      {
+        post.eyecatch && (
+          <img
+            class="eyecatch"
+            src={post.eyecatch.url}
+            alt=""
+            width={post.eyecatch.width}
+            height={post.eyecatch.height}
+          />
+        )
+      }
+      <div class="blog-meta">
+        {post.category && <span class="blog-category">{post.category.name}</span>}
+        <time datetime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
+      </div>
+      <h1>{title}</h1>
+      <div class="blog-content" set:html={post.content || ""} />
+    </article>
+  </body>
+</html>
+
+<style is:global>
+  body {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 16px;
+    font-family: sans-serif;
+    line-height: 1.8;
+    color: #222;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .eyecatch {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1200 / 630;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  h1 {
+    margin: 16px 0;
+    font-size: 28px;
+  }
+
+  .blog-meta {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-top: 16px;
+    color: #666;
+    font-size: 14px;
+  }
+
+  .blog-category {
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: #eee;
+    color: #333;
+  }
+
+  .blog-content h2 {
+    margin-top: 40px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #ddd;
+  }
+</style>
