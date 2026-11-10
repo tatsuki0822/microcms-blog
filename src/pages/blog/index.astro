@@ -2,6 +2,7 @@
 import { formatDate, getBlogs, getCategories } from "../../lib/microcms.js";
 
 const [posts, categories] = await Promise.all([getBlogs(), getCategories()]);
+const articleHref = (id) => (import.meta.env.PROD ? `blog/${id}.html` : `/blog/${id}/`);
 ---
 
 <html lang="ja">
@@ -27,7 +28,7 @@ const [posts, categories] = await Promise.all([getBlogs(), getCategories()]);
       ) : (
         <div class="blog-list">
           {posts.map((item) => (
-            <a class="blog-card" href={`/blog/${item.id}/`}>
+            <a class="blog-card" href={articleHref(item.id)}>
               {item.eyecatch && (
                 <img
                   src={item.eyecatch.url}
