@@ -1,8 +1,9 @@
-// @ts-check
+
 import { defineConfig } from "astro/config";
 
-// https://astro.build/config
 export default defineConfig({
+  site: "https://tatsuki0822.github.io",
+  base: "/microcms-blog",
   build: {
     format: "file",
   },
